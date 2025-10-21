@@ -1,6 +1,9 @@
 
 import RPi.GPIO as GPIO
 import serial
+import argparse
+
+
 EN_485 =  4
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(EN_485,GPIO.OUT)
@@ -20,7 +23,25 @@ def send_signal(input:str):
         return str
 
 
+def on():
+    send_signal("lo 2000")
+    send_signal("ls all")
 
-while (1):
-        command = input('command:')
-        send_signal(command)
+def off():
+    send_signal("lo 0")
+    send_signal("ls all")
+       
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(prog='LED_Controller')
+    parser.add_argument('action', choices = ['on', 'off'])
+    args = parser.parse_args()
+
+    if (args.action == 'on'):
+        on()
+
+    if (args.action == 'off'):
+        off()
+
+
+
