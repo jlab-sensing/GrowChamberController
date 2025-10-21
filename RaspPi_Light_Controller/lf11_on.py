@@ -31,6 +31,7 @@ def on():
 
 def off():
     send_signal("lo 0")
+    sleep (1)
     send_signal("ls all")
        
 
