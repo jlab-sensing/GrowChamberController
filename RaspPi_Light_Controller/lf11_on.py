@@ -2,6 +2,7 @@
 import RPi.GPIO as GPIO
 import serial
 import argparse
+from time import sleep
 
 
 EN_485 =  4
@@ -25,6 +26,7 @@ def send_signal(input:str):
 
 def on():
     send_signal("lo 2000")
+    sleep(1)
     send_signal("ls all")
 
 def off():
