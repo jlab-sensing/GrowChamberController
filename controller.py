@@ -22,7 +22,7 @@ def send_signal(input: str) -> str:
 
 
 def set_brightness(level: int):
-    if level <= 0 or level >= 2000:
+    if level < 0 or level > 2000:
         raise ValueError("Brightness level must be between 0 and 2000")
     command = f"lo {level}"
     send_signal(command)
