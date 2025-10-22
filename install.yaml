@@ -1,0 +1,53 @@
+---
+- name: Install LED controller
+  hosts: all
+
+  vars:
+    repo_path: "/home/{{ ansible_user }}/GrowChamberController"
+    script_path: "{{ repo_path }}/controller.py"
+    log_path: "{{ repo_path }}/controller.log"
+
+  tasks:
+    - name: Ping hosts
+      ansible.builtin.ping:
+
+    - name: Install required packages
+      ansible.builtin.package:
+        name:
+          - git
+          - python3-pip
+          - python3-serial
+          - python3-rpi.gpio
+        state: present
+
+    - name: Clone repository
+      ansible.builtin.git:
+        repo: "git@github.com:jlab-sensing/GrowChamberController.git"
+        dest: "/home/{{ ansible_user }}/GrowChamberController"
+        accept_newhostkey: true
+
+    - name: Turn on leds immediately for testing
+      ansible.builtin.command: "python3 {{ script_path }} on"
+
+    - name:
+      ansible.builtin.pause:
+        prompt: "Check that LEDs are turned on"
+        seconds: 15
+
+    - name: Turn off leds immediately for testing
+      ansible.builtin.command: "python3 {{ script_path }} off"
+
+    - name: Setup ON cronjob
+      ansible.builtin.cron:
+        name: "Turn leds ON at 6:00"
+        minute: "0"
+        hour: "6"
+        job: "python3 {{ script_path }} on > {{ log_path }} 2>&1"
+
+
+    - name: Setup OFF cronjob
+      ansible.builtin.cron:
+        name: "Turn leds OFF at 17:00"
+        minute: "0"
+        hour: "17"
+        job: "python3 {{ script_path }} off > {{ log_path }} 2>&1"
