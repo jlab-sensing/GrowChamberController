@@ -12,6 +12,7 @@
       ansible.builtin.ping:
 
     - name: Install required packages
+      become: true
       ansible.builtin.package:
         name:
           - git
@@ -27,22 +28,21 @@
         accept_newhostkey: true
 
     - name: Turn on leds immediately for testing
-      ansible.builtin.command: "python3 {{ script_path }} on"
+      ansible.builtin.command: "python3 {{ script_path }} 500"
 
     - name:
       ansible.builtin.pause:
-        prompt: "Check that LEDs are turned on"
         seconds: 15
 
     - name: Turn off leds immediately for testing
-      ansible.builtin.command: "python3 {{ script_path }} off"
+      ansible.builtin.command: "python3 {{ script_path }} 0"
 
     - name: Setup ON cronjob
       ansible.builtin.cron:
         name: "Turn leds ON at 6:00"
         minute: "0"
         hour: "6"
-        job: "python3 {{ script_path }} on > {{ log_path }} 2>&1"
+        job: "python3 {{ script_path }} 2000 > {{ log_path }} 2>&1"
 
 
     - name: Setup OFF cronjob
@@ -50,4 +50,4 @@
         name: "Turn leds OFF at 17:00"
         minute: "0"
         hour: "17"
-        job: "python3 {{ script_path }} off > {{ log_path }} 2>&1"
+        job: "python3 {{ script_path }} 0 > {{ log_path }} 2>&1"

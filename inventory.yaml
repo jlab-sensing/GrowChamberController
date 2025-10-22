@@ -1,0 +1,7 @@
+---
+ungrouped:
+  hosts:
+    controller:
+      ansible_host: 172.31.100.220
+  vars:
+    ansible_user: tyler
